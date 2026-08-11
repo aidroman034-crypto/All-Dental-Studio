@@ -13,11 +13,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@500;600;700;800;900&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script>
-/* Defined here (before any <img> tags) so onerror="imgFallback(this)" always
-   has something to call, even if a photo fails to load while the page is
-   still parsing. Every photo first looks for a short-named file in /media
-   (see MEDIA-GUIDE.txt); if it's not there yet, this steps through backup
-   stock photos instead. */
+/* Placeholder fallback — used ONLY for Services and Doctors photos, since those
+   real photos aren't ready yet. Every other image on the site (hero, before/after,
+   etc.) uses a plain src with no fallback, so a missing file there shows as broken
+   on purpose (makes naming mistakes obvious). */
 function imgFallback(img){
   const list = (img.dataset.fallback || '').split('|').filter(Boolean);
   if (list.length){
@@ -66,6 +65,7 @@ function imgFallback(img){
   --ease: cubic-bezier(.16,.8,.28,1);
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+svg{display:block;}
 html{scroll-behavior:smooth;}
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto;}
@@ -112,6 +112,11 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
              radial-gradient(600px 360px at 4% 96%, rgba(11,74,115,.08), transparent 60%);
 }
 .section--navy{background:linear-gradient(160deg,var(--navy),var(--blue-950));color:#fff;}
+.section--gray{
+  position:relative;
+  background:linear-gradient(155deg, #EEF0F2 0%, #E6E8EB 50%, #EEF0F2 100%);
+  isolation:isolate;
+}
 
 /* buttons */
 .btn{
@@ -141,15 +146,8 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
   content:'';position:absolute;inset:0;background:rgba(246,249,251,0);-webkit-backdrop-filter:blur(0px);backdrop-filter:blur(0px);
   transition:background .4s var(--ease), backdrop-filter .4s var(--ease);z-index:-1;
 }
-.site-header::after{
-  /* soft blurred fade instead of a hard border/shadow line */
-  content:'';position:absolute;left:0;right:0;top:100%;height:34px;pointer-events:none;
-  background:linear-gradient(to bottom, rgba(246,249,251,.55), rgba(246,249,251,0) 85%);
-  opacity:0;filter:blur(7px);transition:opacity .4s var(--ease);z-index:-1;
-}
 .site-header.is-scrolled{padding:12px 0;}
 .site-header.is-scrolled::before{background:rgba(246,249,251,.86);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);}
-.site-header.is-scrolled::after{opacity:1;}
 .header-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;}
 .logo{display:flex;align-items:center;gap:10px;flex:none;}
 .logo-mark{height:52px;width:auto;flex:none;transition:transform .4s var(--ease);}
@@ -205,10 +203,9 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
 /* ============ HERO ============ */
 .hero{
   position:relative;
-  background:linear-gradient(165deg,var(--blue-deep) 0%, var(--blue-brand) 55%, #2493C8 100%);
+  background:linear-gradient(165deg,var(--blue-800) 0%, var(--blue-600) 50%, var(--blue-300) 100%);
   color:#fff;padding:168px 0 0;overflow:hidden;
 }
-.hero-tooth-bg{position:absolute;top:-60px;right:-120px;width:620px;height:620px;opacity:.08;pointer-events:none;}
 .hero-inner{position:relative;z-index:2;display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;padding-bottom:150px;}
 .hero-copy .eyebrow{color:#BFE6FA;}
 .hero-copy .eyebrow::before{background:#fff;}
@@ -233,9 +230,15 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
 .hero-stat b{display:block;font-family:'Golos Text',sans-serif;font-size:40px;color:#fff;font-weight:900;line-height:1;}
 .hero-stat span{display:block;margin-top:8px;font-size:13.5px;color:rgba(255,255,255,.78);font-weight:700;letter-spacing:.02em;}
 .hero-media{position:relative;display:flex;justify-content:center;}
+.hero-media::before{
+  content:'';position:absolute;inset:-36px;z-index:0;pointer-events:none;
+  background:radial-gradient(circle, rgba(255,255,255,.14), transparent 70%);
+  filter:blur(26px);
+}
 .hero-media-frame{
-  position:relative;border-radius:var(--radius-xl);overflow:hidden;box-shadow:0 40px 90px -30px rgba(0,0,0,.5);
-  border:6px solid rgba(255,255,255,.15);aspect-ratio:9/16;width:100%;max-width:340px;background:var(--navy);
+  position:relative;z-index:1;border-radius:var(--radius-xl);overflow:hidden;
+  box-shadow:0 40px 90px -30px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.08);
+  aspect-ratio:9/16;width:100%;max-width:340px;background:var(--navy);
 }
 .hero-media-frame video,.hero-media-frame img{width:100%;height:100%;object-fit:cover;display:block;}
 .reels-mute{
@@ -269,6 +272,9 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
 .section--video-bg .vbg-overlay{
   display:none;position:absolute;inset:0;z-index:1;
   background:linear-gradient(160deg, rgba(4,26,43,.86), rgba(11,74,115,.78) 55%, rgba(4,26,43,.9));
+}
+.section--gray.section--video-bg .vbg-overlay{
+  background:linear-gradient(160deg, rgba(38,40,43,.82), rgba(64,67,71,.72) 55%, rgba(30,32,35,.85));
 }
 .section--video-bg .container{position:relative;z-index:2;}
 /* activated only once JS confirms a real video file loaded — see has-video class */
@@ -336,7 +342,7 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
 .ba-slider{position:relative;border-radius:var(--radius-md);overflow:hidden;aspect-ratio:16/11;cursor:ew-resize;user-select:none;touch-action:pan-y;}
 .ba-slider img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;pointer-events:none;user-select:none;}
 .ba-slider .ba-before{z-index:1;}
-.ba-slider .ba-after-wrap{position:absolute;inset:0;overflow:hidden;z-index:2;clip-path:inset(0 50% 0 0);}
+.ba-slider .ba-after-wrap{position:absolute;inset:0;overflow:hidden;z-index:2;clip-path:inset(0 0 0 50%);}
 .ba-slider .ba-after-wrap img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
 .ba-tag{position:absolute;top:12px;z-index:3;background:rgba(10,34,51,.6);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);color:#fff;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:5px 12px;border-radius:100px;}
 .ba-tag.before{left:12px;}
@@ -365,7 +371,6 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
 .doc-info h3{font-family:'Golos Text';font-size:19px;margin:6px 0 4px;color:#fff;}
 .doc-info p{font-size:12.8px;color:rgba(255,255,255,.75);max-height:0;opacity:0;overflow:hidden;transition:max-height .4s var(--ease),opacity .4s var(--ease);}
 .doc-card:hover .doc-info p{max-height:80px;opacity:1;margin-top:6px;}
-.doc-tooth{position:absolute;top:16px;right:16px;width:34px;height:34px;opacity:.9;color:#fff;}
 
 /* ============ PROCESS ============ */
 .process-wrap{position:relative;}
@@ -389,31 +394,67 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
 .rv-btn{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--line);display:flex;align-items:center;justify-content:center;transition:background .3s,border-color .3s,transform .3s;}
 .rv-btn:hover{background:var(--blue-brand);border-color:var(--blue-brand);color:#fff;transform:translateY(-2px);}
 .rv-btn svg{width:18px;height:18px;}
-.reviews-track{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:14px;scrollbar-width:none;}
+.reviews-track{
+  display:flex;gap:22px;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x proximity;scroll-behavior:smooth;
+  padding-bottom:14px;scrollbar-width:none;
+  touch-action:pan-x;overscroll-behavior-x:contain;
+}
 .reviews-track::-webkit-scrollbar{display:none;}
 .rv-card{
+  position:relative;overflow:hidden;
   scroll-snap-align:start;flex:0 0 clamp(270px,32%,360px);
   background:var(--paper);border:1px solid var(--line);border-radius:var(--radius-lg);padding:26px;
   display:flex;flex-direction:column;gap:14px;box-shadow:var(--shadow-sm);
+}
+.rv-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,#fdf497,#fd5949,#d6249f,#285AEB);
 }
 .rv-stars{display:flex;gap:3px;color:var(--gold);}
 .rv-stars svg{width:16px;height:16px;}
 .rv-card p{font-size:14.5px;line-height:1.65;color:var(--ink);flex:1;}
 .rv-person{display:flex;align-items:center;gap:12px;}
-.rv-avatar{width:42px;height:42px;border-radius:50%;background:var(--blue-pale);color:var(--blue-deep);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'Golos Text';flex:none;}
+.rv-avatar{width:42px;height:42px;border-radius:50%;background:var(--blue-pale);color:var(--blue-deep);display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'Golos Text';flex:none;position:relative;}
+.rv-avatar .ig-dot{
+  position:absolute;right:-3px;bottom:-3px;width:15px;height:15px;border-radius:50%;flex:none;
+  background:radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);
+  border:2px solid var(--paper);display:flex;align-items:center;justify-content:center;
+}
+.rv-avatar .ig-dot svg{width:7px;height:7px;color:#fff;}
 .rv-person b{display:block;font-size:14px;}
 .rv-person span{font-size:12px;color:var(--muted);}
 
-/* ============ PROMO ============ */
-.promo{
-  position:relative;border-radius:var(--radius-xl);overflow:hidden;padding:64px 56px;
-  background:linear-gradient(120deg,var(--blue-deep),var(--blue-brand) 65%,#2493C8);
-  color:#fff;display:flex;align-items:center;justify-content:space-between;gap:32px;flex-wrap:wrap;
-}
-.promo-tooth{position:absolute;right:-40px;bottom:-60px;width:260px;height:260px;opacity:.1;}
-.promo h2{color:#fff;font-size:clamp(26px,3vw,36px);max-width:520px;position:relative;z-index:2;}
-.promo p{color:rgba(255,255,255,.82);margin-top:12px;max-width:460px;font-size:15.5px;position:relative;z-index:2;}
-.promo-cta{position:relative;z-index:2;flex:none;}
+/* ============ PRICE LIST ============ */
+.price-list-wrap{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:14px;}
+.price-cat{border:1px solid var(--line);border-radius:var(--radius-md);overflow:hidden;background:var(--paper);transition:border-color .3s,box-shadow .3s;}
+.price-cat.is-open{border-color:var(--blue-brand);box-shadow:var(--shadow-sm);}
+.price-cat-head{width:100%;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;text-align:left;}
+.pc-title{display:flex;align-items:center;gap:14px;min-width:0;}
+.pc-num{font-family:'Golos Text',sans-serif;font-weight:800;font-size:13px;color:var(--blue-brand);background:var(--blue-pale);width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex:none;}
+.price-cat-head h3{font-family:'Golos Text',sans-serif;font-size:16.5px;font-weight:700;color:var(--navy);}
+.pc-right{display:flex;align-items:center;gap:14px;flex:none;}
+.pc-count{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap;}
+.price-cat-head .plus{width:28px;height:28px;border-radius:50%;background:var(--blue-pale);flex:none;position:relative;transition:background .3s,transform .4s var(--ease);}
+.price-cat-head .plus::before,.price-cat-head .plus::after{content:'';position:absolute;background:var(--blue-brand);top:50%;left:50%;transform:translate(-50%,-50%);transition:transform .3s;}
+.price-cat-head .plus::before{width:12px;height:2px;}
+.price-cat-head .plus::after{width:2px;height:12px;}
+.price-cat.is-open .plus{background:var(--blue-brand);transform:rotate(180deg);}
+.price-cat.is-open .plus::before,.price-cat.is-open .plus::after{background:#fff;}
+.price-cat.is-open .plus::after{transform:translate(-50%,-50%) scaleY(0);}
+.price-cat-body{max-height:0;overflow:hidden;transition:max-height .4s var(--ease);}
+.price-cat-inner{padding:0 24px 22px;}
+.price-note{font-size:13px;color:var(--muted);font-style:italic;line-height:1.6;margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--line);}
+.price-sub{font-size:12.5px;font-weight:800;color:var(--blue-deep);text-transform:uppercase;letter-spacing:.03em;margin:18px 0 6px;}
+.price-sub:first-child{margin-top:0;}
+.price-row{display:flex;justify-content:space-between;align-items:baseline;gap:16px;padding:9px 0;border-bottom:1px dashed var(--line);}
+.price-row:last-child{border-bottom:none;}
+.price-row .pn{font-size:14px;color:var(--ink);line-height:1.5;}
+.price-row .pp{font-size:14px;font-weight:800;color:var(--blue-deep);white-space:nowrap;flex:none;}
+.price-warranty{margin:28px auto 0;max-width:860px;border-radius:var(--radius-lg);background:var(--blue-pale);padding:28px 30px;}
+.price-warranty h3{font-size:18px;margin-bottom:14px;}
+.price-warranty .price-row{border-bottom-color:rgba(11,74,115,.14);}
+.price-disclaimer{max-width:860px;margin:20px auto 0;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6;}
 
 /* ============ FAQ ============ */
 .faq-list{max-width:820px;margin:0 auto;display:flex;flex-direction:column;gap:14px;}
@@ -434,8 +475,8 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
 .contact-grid{display:grid;grid-template-columns:.9fr 1.1fr;gap:48px;}
 .contact-info{display:flex;flex-direction:column;gap:22px;}
 .ci-item{display:flex;gap:16px;align-items:flex-start;}
-.ci-icon{width:48px;height:48px;border-radius:14px;background:var(--blue-pale);display:flex;align-items:center;justify-content:center;flex:none;}
-.ci-icon svg{width:22px;height:22px;color:var(--blue-brand);}
+.ci-icon{width:26px;height:26px;display:grid;place-items:center;flex:none;color:var(--blue-brand);margin-top:2px;}
+.ci-icon svg{width:26px;height:26px;color:var(--blue-brand);}
 .ci-item b{display:block;font-size:15px;margin-bottom:3px;}
 .ci-item span,.ci-item a{display:block;font-size:14px;color:var(--muted);line-height:1.6;}
 .ci-item a:hover{color:var(--blue-brand);}
@@ -511,7 +552,9 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
   .doc-grid{grid-template-columns:1fr 1fr;}
   .process-grid{grid-template-columns:1fr;}
   .form-row{grid-template-columns:1fr;}
-  .promo{padding:44px 26px;flex-direction:column;align-items:flex-start;}
+  .price-cat-head{padding:16px 18px;}
+  .price-cat-inner{padding:0 18px 18px;}
+  .pc-count{display:none;}
   .hero{padding-top:150px;}
   .hero-badge{left:0;bottom:-24px;}
   .contact-form{padding:26px;}
@@ -536,6 +579,7 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
       <a href="#advantages">Про клініку</a>
       <a href="#doctors">Наші лікарі</a>
       <a href="#services">Послуги</a>
+      <a href="#prices">Ціни</a>
       <a href="#reviews">Відгуки</a>
       <a href="#contact">Контакти</a>
     </nav>
@@ -545,6 +589,9 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
         <a href="tel:+380997022572">+380 99 702 25 72</a>
         <span>м. Калуш, м-н Шептицького, 5</span>
       </div>
+      <a class="icon-btn" href="https://maps.app.goo.gl/4g9Y1XvqNMSNqrqd7" target="_blank" rel="noopener" aria-label="Місцезнаходження на карті">
+        <svg viewBox="0 0 24 24"><path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C7.58 2 4 5.58 4 10c0 5.25 6.72 11.34 7 11.6a1 1 0 0 0 1.3 0C13 21.34 20 15.25 20 10c0-4.42-3.58-8-8-8zm0 11a3 3 0 110-6 3 3 0 010 6z" fill="currentColor"/></svg>
+      </a>
       <a class="icon-btn icon-btn--ig" href="https://www.instagram.com/alldentalstudio/" target="_blank" rel="noopener" aria-label="Instagram All Dental Studio">
         <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor"/></svg>
       </a>
@@ -558,6 +605,7 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
   <a href="#advantages">Про клініку</a>
   <a href="#doctors">Наші лікарі</a>
   <a href="#services">Послуги</a>
+  <a href="#prices">Ціни</a>
   <a href="#reviews">Відгуки</a>
   <a href="#contact">Контакти</a>
   <div class="mobile-contact">
@@ -568,7 +616,6 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="hero">
-  <svg class="hero-tooth-bg" viewBox="0 0 82 100" fill="none"><path d="M 40.3 68.8 L 38.2 70.5 L 36.0 76.9 L 35.4 90.9 L 32.8 96.7 L 31.1 98.1 L 27.2 99.7 L 20.9 98.7 L 16.9 95.4 L 12.7 89.0 L 9.6 81.4 L 5.4 66.7 L 1.9 48.6 L 0.0 33.3 L 0.0 19.6 L 1.9 12.3 L 6.7 5.3 L 10.4 2.5 L 19.3 0.0 L 26.3 0.0 L 40.9 3.8 L 54.9 0.0 L 61.9 0.0 L 70.8 2.5 L 74.5 5.3 L 79.3 12.3 L 81.2 19.6 L 81.2 33.3 L 79.3 48.6 L 75.8 66.7 L 71.6 81.4 L 68.5 89.0 L 64.3 95.4 L 60.3 98.7 L 54.0 99.7 L 50.1 98.1 L 48.4 96.7 L 45.8 90.9 L 45.2 76.9 L 43.0 70.5 Z" stroke="#fff" stroke-width="2"/></svg>
   <div class="container hero-inner">
     <div class="hero-copy">
       <span class="eyebrow">Калуш · Центр імплантації та естетичної стоматології</span>
@@ -576,6 +623,10 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
       <p class="hero-text">Сучасне обладнання, лікарі з багаторічним досвідом та індивідуальний план лікування — від першого огляду до фінального результату, яким приємно посміхатись.</p>
       <div class="hero-ctas">
         <a href="#contact" class="btn btn-white">Записатися на консультацію</a>
+        <a href="#prices" class="btn btn-outline-light">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 3h9l5 5v13a1 1 0 01-1 1H6a1 1 0 01-1-1V4a1 1 0 011-1z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M14 3v5h5" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M8.5 13h7M8.5 16.5h7M8.5 9.5h3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+          Прайс-лист
+        </a>
         <a href="tel:+380997022572" class="btn btn-outline-light">
           <svg viewBox="0 0 24 24" fill="none"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1.1-.2 1.2.5 2.5.7 3.8.7.6 0 1 .4 1 1v3.6c0 .6-.4 1-1 1C10.3 21.3 2.7 13.7 2.7 4.8c0-.6.4-1 1-1H7.3c.6 0 1 .4 1 1 0 1.3.2 2.6.7 3.8.2.4.1.8-.2 1.1L6.6 10.8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
           +380 99 702 25 72
@@ -589,7 +640,7 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
     </div>
     <div class="hero-media">
       <div class="hero-media-frame">
-        <video class="hero-video" id="heroVideo" autoplay muted loop playsinline poster="media/hero.jpg" data-fallback-poster="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=700&q=80" onerror="this.poster=this.dataset.fallbackPoster;">
+        <video class="hero-video" id="heroVideo" autoplay muted loop playsinline poster="media/hero.jpg">
           <source src="media/hero.mp4" type="video/mp4">
         </video>
         <button class="reels-mute" id="heroMuteBtn" aria-label="Увімкнути звук" aria-pressed="false">
@@ -605,10 +656,10 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
 </section>
 
 <!-- ============ ADVANTAGES ============ -->
-<!-- To add a background video: drop media/advantages.mp4 (and optionally media/advantages.jpg as poster) into the media folder. -->
-<section class="section section--video-bg" id="advantages" data-video-section>
-  <video class="vbg" muted loop playsinline poster="media/advantages.jpg" data-bg-video>
-    <source src="media/advantages.mp4" type="video/mp4">
+<!-- Background video: reuses media/hero.mp4 (same file as the hero video) — see MEDIA-GUIDE.txt. -->
+<section class="section section--gray section--video-bg" id="advantages" data-video-section>
+  <video class="vbg" muted loop playsinline poster="media/hero.jpg" data-bg-video>
+    <source src="media/hero.mp4" type="video/mp4">
   </video>
   <div class="vbg-overlay"></div>
   <div class="container">
@@ -681,7 +732,6 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
     </div>
     <div class="doc-grid stagger">
       <article class="doc-card reveal">
-        <svg class="doc-tooth" viewBox="0 0 82 100" fill="none"><path d="M 40.3 68.8 L 38.2 70.5 L 36.0 76.9 L 35.4 90.9 L 32.8 96.7 L 31.1 98.1 L 27.2 99.7 L 20.9 98.7 L 16.9 95.4 L 12.7 89.0 L 9.6 81.4 L 5.4 66.7 L 1.9 48.6 L 0.0 33.3 L 0.0 19.6 L 1.9 12.3 L 6.7 5.3 L 10.4 2.5 L 19.3 0.0 L 26.3 0.0 L 40.9 3.8 L 54.9 0.0 L 61.9 0.0 L 70.8 2.5 L 74.5 5.3 L 79.3 12.3 L 81.2 19.6 L 81.2 33.3 L 79.3 48.6 L 75.8 66.7 L 71.6 81.4 L 68.5 89.0 L 64.3 95.4 L 60.3 98.7 L 54.0 99.7 L 50.1 98.1 L 48.4 96.7 L 45.8 90.9 L 45.2 76.9 L 43.0 70.5 Z" stroke="currentColor" stroke-width="4"/></svg>
         <img src="media/doc1.jpg" data-fallback="https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" alt="Олег Володимирович — головний лікар, імплантолог">
         <div class="doc-overlay"></div>
         <div class="doc-info">
@@ -691,8 +741,7 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
         </div>
       </article>
       <article class="doc-card reveal">
-        <svg class="doc-tooth" viewBox="0 0 82 100" fill="none"><path d="M 40.3 68.8 L 38.2 70.5 L 36.0 76.9 L 35.4 90.9 L 32.8 96.7 L 31.1 98.1 L 27.2 99.7 L 20.9 98.7 L 16.9 95.4 L 12.7 89.0 L 9.6 81.4 L 5.4 66.7 L 1.9 48.6 L 0.0 33.3 L 0.0 19.6 L 1.9 12.3 L 6.7 5.3 L 10.4 2.5 L 19.3 0.0 L 26.3 0.0 L 40.9 3.8 L 54.9 0.0 L 61.9 0.0 L 70.8 2.5 L 74.5 5.3 L 79.3 12.3 L 81.2 19.6 L 81.2 33.3 L 79.3 48.6 L 75.8 66.7 L 71.6 81.4 L 68.5 89.0 L 64.3 95.4 L 60.3 98.7 L 54.0 99.7 L 50.1 98.1 L 48.4 96.7 L 45.8 90.9 L 45.2 76.9 L 43.0 70.5 Z" stroke="currentColor" stroke-width="4"/></svg>
-        <img src="media/doc2.jpg" data-fallback="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" alt="Ірина Петрівна — лікар-ортодонт">
+        <img src="media/doc2.jpg" data-fallback="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=500&q=80|https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" alt="Ірина Петрівна — лікар-ортодонт">
         <div class="doc-overlay"></div>
         <div class="doc-info">
           <span class="role">Лікар-ортодонт</span>
@@ -701,8 +750,7 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
         </div>
       </article>
       <article class="doc-card reveal">
-        <svg class="doc-tooth" viewBox="0 0 82 100" fill="none"><path d="M 40.3 68.8 L 38.2 70.5 L 36.0 76.9 L 35.4 90.9 L 32.8 96.7 L 31.1 98.1 L 27.2 99.7 L 20.9 98.7 L 16.9 95.4 L 12.7 89.0 L 9.6 81.4 L 5.4 66.7 L 1.9 48.6 L 0.0 33.3 L 0.0 19.6 L 1.9 12.3 L 6.7 5.3 L 10.4 2.5 L 19.3 0.0 L 26.3 0.0 L 40.9 3.8 L 54.9 0.0 L 61.9 0.0 L 70.8 2.5 L 74.5 5.3 L 79.3 12.3 L 81.2 19.6 L 81.2 33.3 L 79.3 48.6 L 75.8 66.7 L 71.6 81.4 L 68.5 89.0 L 64.3 95.4 L 60.3 98.7 L 54.0 99.7 L 50.1 98.1 L 48.4 96.7 L 45.8 90.9 L 45.2 76.9 L 43.0 70.5 Z" stroke="currentColor" stroke-width="4"/></svg>
-        <img src="media/doc3.jpg" data-fallback="https://images.unsplash.com/photo-1607990283143-e81e7a2c9349?auto=format&fit=crop&w=500&q=80|https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" alt="Андрій Ігорович — лікар-ортопед, естетична реставрація">
+        <img src="media/doc3.jpg" data-fallback="https://images.unsplash.com/photo-1537368910025-700350fe46c7?auto=format&fit=crop&w=500&q=80|https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" alt="Андрій Ігорович — лікар-ортопед, естетична реставрація">
         <div class="doc-overlay"></div>
         <div class="doc-info">
           <span class="role">Ортопед-естетист</span>
@@ -711,8 +759,7 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
         </div>
       </article>
       <article class="doc-card reveal">
-        <svg class="doc-tooth" viewBox="0 0 82 100" fill="none"><path d="M 40.3 68.8 L 38.2 70.5 L 36.0 76.9 L 35.4 90.9 L 32.8 96.7 L 31.1 98.1 L 27.2 99.7 L 20.9 98.7 L 16.9 95.4 L 12.7 89.0 L 9.6 81.4 L 5.4 66.7 L 1.9 48.6 L 0.0 33.3 L 0.0 19.6 L 1.9 12.3 L 6.7 5.3 L 10.4 2.5 L 19.3 0.0 L 26.3 0.0 L 40.9 3.8 L 54.9 0.0 L 61.9 0.0 L 70.8 2.5 L 74.5 5.3 L 79.3 12.3 L 81.2 19.6 L 81.2 33.3 L 79.3 48.6 L 75.8 66.7 L 71.6 81.4 L 68.5 89.0 L 64.3 95.4 L 60.3 98.7 L 54.0 99.7 L 50.1 98.1 L 48.4 96.7 L 45.8 90.9 L 45.2 76.9 L 43.0 70.5 Z" stroke="currentColor" stroke-width="4"/></svg>
-        <img src="media/doc4.jpg" data-fallback="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" alt="Марія Романівна — дитячий стоматолог">
+        <img src="media/doc4.jpg" data-fallback="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?auto=format&fit=crop&w=500&q=80|https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" alt="Марія Романівна — дитячий стоматолог">
         <div class="doc-overlay"></div>
         <div class="doc-info">
           <span class="role">Дитячий стоматолог</span>
@@ -736,8 +783,8 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
     <div class="ba-grid stagger">
       <div class="ba-card reveal">
         <div class="ba-slider" data-ba>
-          <img class="ba-before" src="media/ba1-before.jpg" data-fallback="https://images.unsplash.com/photo-1609207825181-52d3214556dd?auto=format&fit=crop&w=800&q=80" onerror="imgFallback(this)" alt="До реставрації">
-          <div class="ba-after-wrap"><img src="media/ba1-after.jpg" data-fallback="https://images.unsplash.com/photo-1522337660859-02fbefca4702?auto=format&fit=crop&w=800&q=80" onerror="imgFallback(this)" alt="Після реставрації"></div>
+          <img class="ba-before" src="media/ba1-before.jpg" alt="До реставрації">
+          <div class="ba-after-wrap"><img src="media/ba1-after.jpg" alt="Після реставрації"></div>
           <span class="ba-tag before">До</span><span class="ba-tag after">Після</span>
           <div class="ba-handle"><span class="knob"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
         </div>
@@ -745,8 +792,8 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
       </div>
       <div class="ba-card reveal">
         <div class="ba-slider" data-ba>
-          <img class="ba-before" src="media/ba2-before.jpg" data-fallback="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80" onerror="imgFallback(this)" alt="До імплантації">
-          <div class="ba-after-wrap"><img src="media/ba2-after.jpg" data-fallback="https://images.unsplash.com/photo-1581585504843-c07e2c8e8f6f?auto=format&fit=crop&w=800&q=80|https://images.unsplash.com/photo-1580281657702-257584239a55?auto=format&fit=crop&w=800&q=80" onerror="imgFallback(this)" alt="Після імплантації"></div>
+          <img class="ba-before" src="media/ba2-before.jpg" alt="До імплантації">
+          <div class="ba-after-wrap"><img src="media/ba2-after.jpg" alt="Після імплантації"></div>
           <span class="ba-tag before">До</span><span class="ba-tag after">Після</span>
           <div class="ba-handle"><span class="knob"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
         </div>
@@ -754,8 +801,8 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
       </div>
       <div class="ba-card reveal">
         <div class="ba-slider" data-ba>
-          <img class="ba-before" src="media/ba3-before.jpg" data-fallback="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?auto=format&fit=crop&w=800&q=80|https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=80" onerror="imgFallback(this)" alt="До вінірів">
-          <div class="ba-after-wrap"><img src="media/ba3-after.jpg" data-fallback="https://images.unsplash.com/photo-1523289333742-be1143f6b766?auto=format&fit=crop&w=800&q=80" onerror="imgFallback(this)" alt="Після вінірів"></div>
+          <img class="ba-before" src="media/ba3-before.jpg" alt="До вінірів">
+          <div class="ba-after-wrap"><img src="media/ba3-after.jpg" alt="Після вінірів"></div>
           <span class="ba-tag before">До</span><span class="ba-tag after">Після</span>
           <div class="ba-handle"><span class="knob"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
         </div>
@@ -763,8 +810,8 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
       </div>
       <div class="ba-card reveal">
         <div class="ba-slider" data-ba>
-          <img class="ba-before" src="media/ba4-before.jpg" data-fallback="https://images.unsplash.com/photo-1519500099198-fd81846b8f77?auto=format&fit=crop&w=800&q=80" onerror="imgFallback(this)" alt="До відбілювання">
-          <div class="ba-after-wrap"><img src="media/ba4-after.jpg" data-fallback="https://images.unsplash.com/photo-1615996001756-6f1f36ba7c9f?auto=format&fit=crop&w=800&q=80|https://images.unsplash.com/photo-1601931935821-5fbe71c9cc63?auto=format&fit=crop&w=800&q=80" onerror="imgFallback(this)" alt="Після відбілювання"></div>
+          <img class="ba-before" src="media/ba4-before.jpg" alt="До відбілювання">
+          <div class="ba-after-wrap"><img src="media/ba4-after.jpg" alt="Після відбілювання"></div>
           <span class="ba-tag before">До</span><span class="ba-tag after">Після</span>
           <div class="ba-handle"><span class="knob"><svg viewBox="0 0 24 24" fill="none"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
         </div>
@@ -785,35 +832,35 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
     </div>
     <div class="svc-grid stagger">
       <article class="svc-card reveal">
-        <div class="svc-media"><span class="svc-num">01</span><img src="media/svc1.jpg" data-fallback="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=500&q=80" loading="lazy" onerror="imgFallback(this)" alt="Лікування карієсу"></div>
+        <div class="svc-media"><span class="svc-num">01</span><img src="media/svc1.jpg" data-fallback="https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" loading="lazy" alt="Лікування карієсу"></div>
         <div class="svc-body"><h3>Лікування карієсу</h3><p>Сучасні композитні матеріали та мікроскопна діагностика для точного і естетичного результату.</p><a href="#contact" class="svc-link">Записатись <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
       </article>
       <article class="svc-card reveal">
-        <div class="svc-media"><span class="svc-num">02</span><img src="media/svc2.jpg" data-fallback="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=500&q=80" loading="lazy" onerror="imgFallback(this)" alt="Імплантація зубів"></div>
+        <div class="svc-media"><span class="svc-num">02</span><img src="media/svc2.jpg" data-fallback="https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" loading="lazy" alt="Імплантація зубів"></div>
         <div class="svc-body"><h3>Імплантація</h3><p>Відновлення зубного ряду імплантами преміальних систем із передбачуваним і довговічним результатом.</p><a href="#contact" class="svc-link">Записатись <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
       </article>
       <article class="svc-card reveal">
-        <div class="svc-media"><span class="svc-num">03</span><img src="media/svc3.jpg" data-fallback="https://images.unsplash.com/photo-1541604193435-422b4a3c9c4e?auto=format&fit=crop&w=500&q=80" loading="lazy" onerror="imgFallback(this)" alt="Вініри"></div>
+        <div class="svc-media"><span class="svc-num">03</span><img src="media/svc3.jpg" data-fallback="https://images.unsplash.com/photo-1581585504843-c07e2c8e8f6f?auto=format&fit=crop&w=500&q=80|https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" loading="lazy" alt="Вініри"></div>
         <div class="svc-body"><h3>Вініри</h3><p>Тонкі керамічні накладки, які змінюють форму та колір посмішки без травматичної обточки зубів.</p><a href="#contact" class="svc-link">Записатись <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
       </article>
       <article class="svc-card reveal">
-        <div class="svc-media"><span class="svc-num">04</span><img src="media/svc4.jpg" data-fallback="https://images.unsplash.com/photo-1595003500447-88bd1360de1e?auto=format&fit=crop&w=500&q=80" loading="lazy" onerror="imgFallback(this)" alt="Відбілювання зубів"></div>
+        <div class="svc-media"><span class="svc-num">04</span><img src="media/svc4.jpg" data-fallback="https://images.unsplash.com/photo-1581585598458-5c8f3d0e0f6a?auto=format&fit=crop&w=500&q=80|https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" loading="lazy" alt="Відбілювання зубів"></div>
         <div class="svc-body"><h3>Відбілювання</h3><p>Професійне відбілювання до 8 тонів за одну процедуру, безпечне для емалі та ясен.</p><a href="#contact" class="svc-link">Записатись <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
       </article>
       <article class="svc-card reveal">
-        <div class="svc-media"><span class="svc-num">05</span><img src="media/svc5.jpg" data-fallback="https://images.unsplash.com/photo-1601574476581-8b0ba4c3b93a?auto=format&fit=crop&w=500&q=80|https://images.unsplash.com/photo-1571772996211-2f02c9727629?auto=format&fit=crop&w=500&q=80" loading="lazy" onerror="imgFallback(this)" alt="Ортодонтія"></div>
+        <div class="svc-media"><span class="svc-num">05</span><img src="media/svc5.jpg" data-fallback="https://images.unsplash.com/photo-1571772996211-2f02c9727629?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" loading="lazy" alt="Ортодонтія"></div>
         <div class="svc-body"><h3>Ортодонтія</h3><p>Брекет-системи та елайнери для вирівнювання прикусу в будь-якому віці — комфортно та непомітно.</p><a href="#contact" class="svc-link">Записатись <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
       </article>
       <article class="svc-card reveal">
-        <div class="svc-media"><span class="svc-num">06</span><img src="media/svc6.jpg" data-fallback="https://images.unsplash.com/photo-1588776814491-3612384f6c96?auto=format&fit=crop&w=500&q=80|https://images.unsplash.com/photo-1629909615957-be38d48fbbe4?auto=format&fit=crop&w=500&q=80" loading="lazy" onerror="imgFallback(this)" alt="Професійна чистка зубів"></div>
+        <div class="svc-media"><span class="svc-num">06</span><img src="media/svc6.jpg" data-fallback="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=500&q=80|https://images.unsplash.com/photo-1606811841689-23dfddce3e95?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" loading="lazy" alt="Професійна чистка зубів"></div>
         <div class="svc-body"><h3>Професійна чистка</h3><p>Видалення нальоту й каменю, полірування емалі — профілактика, яку варто повторювати двічі на рік.</p><a href="#contact" class="svc-link">Записатись <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
       </article>
       <article class="svc-card reveal">
-        <div class="svc-media"><span class="svc-num">07</span><img src="media/svc7.jpg" data-fallback="https://images.unsplash.com/photo-1588776814354-2d4c0139d5a5?auto=format&fit=crop&w=500&q=80|https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?auto=format&fit=crop&w=500&q=80" loading="lazy" onerror="imgFallback(this)" alt="Дитяча стоматологія"></div>
+        <div class="svc-media"><span class="svc-num">07</span><img src="media/svc7.jpg" data-fallback="https://images.unsplash.com/photo-1607613009820-a29f7bb81c04?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" loading="lazy" alt="Дитяча стоматологія"></div>
         <div class="svc-body"><h3>Дитяча стоматологія</h3><p>Дбайливе лікування молочних і постійних зубів у форматі, який знімає страх перед кабінетом.</p><a href="#contact" class="svc-link">Записатись <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
       </article>
       <article class="svc-card reveal">
-        <div class="svc-media"><span class="svc-num">08</span><img src="media/svc8.jpg" data-fallback="https://images.unsplash.com/photo-1629909613003-2cc3b1e5a5c4?auto=format&fit=crop&w=500&q=80|https://images.unsplash.com/photo-1626202373152-e2f2eb02c3a3?auto=format&fit=crop&w=500&q=80" loading="lazy" onerror="imgFallback(this)" alt="Хірургічна стоматологія"></div>
+        <div class="svc-media"><span class="svc-num">08</span><img src="media/svc8.jpg" data-fallback="https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=500&q=80|https://images.unsplash.com/photo-1609840114035-3c981b782dfe?auto=format&fit=crop&w=500&q=80" onerror="imgFallback(this)" loading="lazy" alt="Хірургічна стоматологія"></div>
         <div class="svc-body"><h3>Хірургія</h3><p>Видалення, кістоутворення, синус-ліфтинг та інші хірургічні втручання під контролем анестезіолога.</p><a href="#contact" class="svc-link">Записатись <svg viewBox="0 0 24 24" fill="none"><path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></a></div>
       </article>
     </div>
@@ -862,12 +909,19 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
 </section>
 
 <!-- ============ REVIEWS ============ -->
-<section class="section section--pale" id="reviews">
+<!-- Background video: reuses media/hero.mp4 by default (same gray-tinted treatment as Advantages). Drop media/reviews.mp4 + media/reviews.jpg to use a different clip here instead. -->
+<section class="section section--gray section--video-bg" id="reviews" data-video-section>
+  <video class="vbg" muted loop playsinline poster="media/reviews.jpg" data-bg-video>
+    <source src="media/reviews.mp4" type="video/mp4">
+    <source src="media/hero.mp4" type="video/mp4">
+  </video>
+  <div class="vbg-overlay"></div>
   <div class="container">
     <div class="reviews-head reveal">
       <div class="section-head" style="margin-bottom:0;">
         <span class="eyebrow">Відгуки</span>
         <h2 class="section-title">Що кажуть наші пацієнти</h2>
+        <p class="section-sub" style="margin-top:10px;">Реальні відгуки з нашого Instagram — знімки коментарів «як є», без редагування.</p>
       </div>
       <div class="reviews-nav">
         <button class="rv-btn" id="rvPrev" aria-label="Попередні відгуки"><svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
@@ -879,48 +933,265 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
       <div class="rv-card reveal">
         <div class="rv-stars">★★★★★</div>
         <p>«У вас завжди найкращий результат» 🙏🧡</p>
-        <div class="rv-person"><span class="rv-avatar">К</span><div><b>keym_letto</b><span>Instagram · відгук від автора</span></div></div>
+        <div class="rv-person"><span class="rv-avatar">К<span class="ig-dot"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5.5" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2.2"/></svg></span></span><div><b>keym_letto</b><span>відгук від автора</span></div></div>
       </div>
       <div class="rv-card reveal">
         <div class="rv-stars">★★★★★</div>
         <p>«Чудова клініка з професійними лікарями» 👍</p>
-        <div class="rv-person"><span class="rv-avatar">В</span><div><b>vahylevychnatalia</b><span>Instagram · відгук від автора</span></div></div>
+        <div class="rv-person"><span class="rv-avatar">В<span class="ig-dot"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5.5" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2.2"/></svg></span></span><div><b>vahylevychnatalia</b><span>відгук від автора</span></div></div>
       </div>
       <div class="rv-card reveal">
         <div class="rv-stars">★★★★★</div>
         <p>«У Вас лікарю золоті руки!)))» 👏👏👏👏</p>
-        <div class="rv-person"><span class="rv-avatar">С</span><div><b>sv.itlana4366</b><span>Instagram · відгук від автора</span></div></div>
+        <div class="rv-person"><span class="rv-avatar">С<span class="ig-dot"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5.5" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2.2"/></svg></span></span><div><b>sv.itlana4366</b><span>відгук від автора</span></div></div>
       </div>
       <div class="rv-card reveal">
         <div class="rv-stars">★★★★★</div>
         <p>«Класна команда, знаю з власного досвіду» 👏👏👏</p>
-        <div class="rv-person"><span class="rv-avatar">Б</span><div><b>boikonadia200720</b><span>Instagram · відгук від автора</span></div></div>
+        <div class="rv-person"><span class="rv-avatar">Б<span class="ig-dot"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5.5" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2.2"/></svg></span></span><div><b>boikonadia200720</b><span>відгук від автора</span></div></div>
       </div>
       <div class="rv-card reveal">
         <div class="rv-stars">★★★★★</div>
         <p>«Олег Володимирович, Ви робите величезну справу для блага людей!! Я перебуваю у процесі… Вдячна за високий професіоналізм і якісну роботу!» 🔥❤️</p>
-        <div class="rv-person"><span class="rv-avatar">С</span><div><b>svbilak</b><span>Instagram · відгук від автора</span></div></div>
+        <div class="rv-person"><span class="rv-avatar">С<span class="ig-dot"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5.5" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2.2"/></svg></span></span><div><b>svbilak</b><span>відгук від автора</span></div></div>
       </div>
       <div class="rv-card reveal">
         <div class="rv-stars">★★★★★</div>
         <p>«Найкращий стоматолог, найкраща команда, найкраща клініка» 👏👏👏❤️🔥🔥</p>
-        <div class="rv-person"><span class="rv-avatar">І</span><div><b>irynaalexandrovna</b><span>Instagram · відгук від автора</span></div></div>
+        <div class="rv-person"><span class="rv-avatar">І<span class="ig-dot"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5.5" stroke="currentColor" stroke-width="2.2"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="2.2"/></svg></span></span><div><b>irynaalexandrovna</b><span>відгук від автора</span></div></div>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ============ PROMO ============ -->
-<section class="section section--tight">
+<!-- ============ PRICE LIST ============ -->
+<section class="section section--gray" id="prices">
   <div class="container">
-    <div class="promo reveal">
-      <svg class="promo-tooth" viewBox="0 0 82 100" fill="none"><path d="M 40.3 68.8 L 38.2 70.5 L 36.0 76.9 L 35.4 90.9 L 32.8 96.7 L 31.1 98.1 L 27.2 99.7 L 20.9 98.7 L 16.9 95.4 L 12.7 89.0 L 9.6 81.4 L 5.4 66.7 L 1.9 48.6 L 0.0 33.3 L 0.0 19.6 L 1.9 12.3 L 6.7 5.3 L 10.4 2.5 L 19.3 0.0 L 26.3 0.0 L 40.9 3.8 L 54.9 0.0 L 61.9 0.0 L 70.8 2.5 L 74.5 5.3 L 79.3 12.3 L 81.2 19.6 L 81.2 33.3 L 79.3 48.6 L 75.8 66.7 L 71.6 81.4 L 68.5 89.0 L 64.3 95.4 L 60.3 98.7 L 54.0 99.7 L 50.1 98.1 L 48.4 96.7 L 45.8 90.9 L 45.2 76.9 L 43.0 70.5 Z" stroke="#fff" stroke-width="3"/></svg>
-      <div>
-        <h2>Безкоштовна консультація та план лікування</h2>
-        <p>Прийдіть на огляд — отримаєте прозорий план лікування з термінами та вартістю, без зобов'язань.</p>
-      </div>
-      <a href="#contact" class="btn btn-white promo-cta">Записатися безкоштовно</a>
+    <div class="section-head center reveal">
+      <span class="eyebrow">Прайс-лист</span>
+      <h2 class="section-title">Ціни на послуги</h2>
+      <p class="section-sub">Повний перелік цін по напрямках. Остаточну вартість лікування підтверджує лікар після огляду та діагностики.</p>
     </div>
+    <div class="price-list-wrap">
+      <div class="price-cat">
+        <button class="price-cat-head">
+          <span class="pc-title"><span class="pc-num">01</span><h3>Обстеження</h3></span>
+          <span class="pc-right"><span class="pc-count">17 позицій</span><span class="plus"></span></span>
+        </button>
+        <div class="price-cat-body">
+          <div class="price-cat-inner">
+            <div class="price-row"><span class="pn">Консультація стосовно одного зуба</span><span class="pp">200 грн</span></div>
+            <div class="price-row"><span class="pn">Консультація головного лікаря планування лікування</span><span class="pp">500 грн</span></div>
+            <div class="price-row"><span class="pn">Ортопантомограма</span><span class="pp">500 грн</span></div>
+            <div class="price-row"><span class="pn">Телерентгенографія голови (в бічній/прямій проекції)</span><span class="pp">500 грн</span></div>
+            <div class="price-row"><span class="pn">Рентгенографія СНЩС (відкритий/закритий рот)</span><span class="pp">500 грн</span></div>
+            <div class="price-row"><span class="pn">Аксіографія</span><span class="pp">1000 грн</span></div>
+            <div class="price-row"><span class="pn">Комп'ютерна томографія (ендо)</span><span class="pp">800 грн</span></div>
+            <div class="price-row"><span class="pn">Комп'ютерна томографія (одна щелепа — верхня або нижня)</span><span class="pp">900 грн</span></div>
+            <div class="price-row"><span class="pn">Комп'ютерна томографія (верхня та нижня щелепи)</span><span class="pp">1000 грн</span></div>
+            <div class="price-row"><span class="pn">СНЩС (лівий або правий, відкритий або закритий)</span><span class="pp">500 грн</span></div>
+            <div class="price-row"><span class="pn">СНЩС (лівий або правий, відкритий та закритий)</span><span class="pp">900 грн</span></div>
+            <div class="price-row"><span class="pn">СНЩС (лівий та правий, відкритий та закритий)</span><span class="pp">1800 грн</span></div>
+            <div class="price-row"><span class="pn">Верхня щелепа та придаткові пазухи носа</span><span class="pp">1000 грн</span></div>
+            <div class="price-row"><span class="pn">Лицевий скелет</span><span class="pp">2000 грн</span></div>
+            <div class="price-sub">Пакетні пропозиції</div>
+            <div class="price-row"><span class="pn">КТ верхньої та нижньої щелепи + ОПТГ + ТРГ</span><span class="pp">1800 грн</span></div>
+            <div class="price-row"><span class="pn">ОПТГ + ТРГ</span><span class="pp">900 грн</span></div>
+            <div class="price-row"><span class="pn">КТ верхньої та нижньої щелепи + ОПТГ чи ТРГ</span><span class="pp">1300 грн</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="price-cat">
+        <button class="price-cat-head">
+          <span class="pc-title"><span class="pc-num">02</span><h3>Профілактика</h3></span>
+          <span class="pc-right"><span class="pc-count">11 позицій</span><span class="plus"></span></span>
+        </button>
+        <div class="price-cat-body">
+          <div class="price-cat-inner">
+            <div class="price-row"><span class="pn">Профілактична гігієна, 1 рівень складності (скайлінг + air flow)</span><span class="pp">1700 грн</span></div>
+            <div class="price-row"><span class="pn">Профілактична гігієна ускладнена (скайлінг + air flow)</span><span class="pp">2000 грн</span></div>
+            <div class="price-row"><span class="pn">Первинне складання перiо-карти</span><span class="pp">700 грн</span></div>
+            <div class="price-sub">Комплексне пародонтологічне лікування</div>
+            <div class="price-row"><span class="pn">Пародонтологічне лікування (легка ступінь, до 5 мм)</span><span class="pp">12000 грн</span></div>
+            <div class="price-row"><span class="pn">Пародонтологічне лікування (середня ступінь, 5-8 мм)</span><span class="pp">18000 грн</span></div>
+            <div class="price-row"><span class="pn">Пародонтологічне лікування (важка ступінь, більше 8 мм)</span><span class="pp">25000 грн</span></div>
+            <div class="price-row"><span class="pn">Заповнення пародонтальної карти / плановий огляд</span><span class="pp">300 грн</span></div>
+            <div class="price-row"><span class="pn">Шинування</span><span class="pp">2000 грн</span></div>
+            <div class="price-row"><span class="pn">Відбілювання комплексне</span><span class="pp">4000 грн</span></div>
+            <div class="price-row"><span class="pn">Відбілювання одиночне</span><span class="pp">2000 грн</span></div>
+            <div class="price-row"><span class="pn">Відбілювання комплексне (домашнє за допомогою кап)</span><span class="pp">10000 грн</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="price-cat">
+        <button class="price-cat-head">
+          <span class="pc-title"><span class="pc-num">03</span><h3>Лікування карієсу / реставрації</h3></span>
+          <span class="pc-right"><span class="pc-count">8 позицій</span><span class="plus"></span></span>
+        </button>
+        <div class="price-cat-body">
+          <div class="price-cat-inner">
+            <div class="price-row"><span class="pn">Художня фотополімерна реставрація, 1 поверхня</span><span class="pp">2300 грн</span></div>
+            <div class="price-row"><span class="pn">Художня фотополімерна реставрація, 2 поверхні</span><span class="pp">2800 грн</span></div>
+            <div class="price-row"><span class="pn">Художня фотополімерна реставрація, 3 поверхні</span><span class="pp">3400 грн</span></div>
+            <div class="price-row"><span class="pn">Художня реставрація з використанням шаблону</span><span class="pp">120 €</span></div>
+            <div class="price-row"><span class="pn">Build-up</span><span class="pp">2200 грн</span></div>
+            <div class="price-row"><span class="pn">Build-up (моляра)</span><span class="pp">2700 грн</span></div>
+            <div class="price-row"><span class="pn">Фіксація безметалевих реставрацій</span><span class="pp">1000 грн</span></div>
+            <div class="price-row"><span class="pn">Ремтерапія Icon (за 1 зуб)</span><span class="pp">1100 грн</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="price-cat">
+        <button class="price-cat-head">
+          <span class="pc-title"><span class="pc-num">04</span><h3>Ендодонтія</h3></span>
+          <span class="pc-right"><span class="pc-count">16 позицій</span><span class="plus"></span></span>
+        </button>
+        <div class="price-cat-body">
+          <div class="price-cat-inner">
+            <p class="price-note">Проводиться з використанням операційного мікроскопа, ендодонтичного мотору, апекслокатора та 3D-обтурацією.</p>
+            <div class="price-row"><span class="pn">Ендо первинне, 1-канальний зуб (різець, верхня щелепа)</span><span class="pp">3500 грн</span></div>
+            <div class="price-row"><span class="pn">Ендо вторинне, 1-канальний зуб (різець, верхня щелепа)</span><span class="pp">4200 грн</span></div>
+            <div class="price-row"><span class="pn">Ендо первинне, 1-канальний зуб (різець, нижня щелепа)</span><span class="pp">3800 грн</span></div>
+            <div class="price-row"><span class="pn">Ендо вторинне, 1-канальний зуб (різець, нижня щелепа)</span><span class="pp">4700 грн</span></div>
+            <div class="price-row"><span class="pn">Ендо первинне, 2-канальний зуб (премоляр)</span><span class="pp">4700 грн</span></div>
+            <div class="price-row"><span class="pn">Ендо вторинне, 2-канальний зуб (премоляр)</span><span class="pp">5300 грн</span></div>
+            <div class="price-row"><span class="pn">Ендо первинне, 3-канальний премоляр</span><span class="pp">5500 грн</span></div>
+            <div class="price-row"><span class="pn">Ендо вторинне, 3-канальний премоляр</span><span class="pp">6000 грн</span></div>
+            <div class="price-row"><span class="pn">Ендо первинне, 3 і більше каналів (моляр)</span><span class="pp">5800 грн</span></div>
+            <div class="price-row"><span class="pn">Ендо вторинне, 3 і більше каналів (моляр)</span><span class="pp">6800 грн</span></div>
+            <div class="price-row"><span class="pn">Ендо первинне, 8-й зуб (зуб мудрості)</span><span class="pp">7200 грн</span></div>
+            <div class="price-row"><span class="pn">Ендо вторинне, 8-й зуб (зуб мудрості)</span><span class="pp">8000 грн</span></div>
+            <div class="price-row"><span class="pn">Спроба лікування без позитивного результату</span><span class="pp">1600 грн</span></div>
+            <div class="price-row"><span class="pn">Преендовідновлення</span><span class="pp">500 грн</span></div>
+            <div class="price-row"><span class="pn">Розпломбування 1 кк</span><span class="pp">1000 грн</span></div>
+            <div class="price-row"><span class="pn">Зняття гострого болю</span><span class="pp">500 грн</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="price-cat">
+        <button class="price-cat-head">
+          <span class="pc-title"><span class="pc-num">05</span><h3>Хірургія</h3></span>
+          <span class="pc-right"><span class="pc-count">31 позицій</span><span class="plus"></span></span>
+        </button>
+        <div class="price-cat-body">
+          <div class="price-cat-inner">
+            <div class="price-row"><span class="pn">Видалення молочного зуба</span><span class="pp">500 грн</span></div>
+            <div class="price-row"><span class="pn">Видалення постійного зуба</span><span class="pp">900 грн</span></div>
+            <div class="price-row"><span class="pn">Видалення постійного зуба складне</span><span class="pp">1800 грн</span></div>
+            <div class="price-row"><span class="pn">Видалення зуба (верхні 8)</span><span class="pp">1300 грн</span></div>
+            <div class="price-row"><span class="pn">Видалення зуба (нижні 8)</span><span class="pp">1900 грн</span></div>
+            <div class="price-row"><span class="pn">Видалення зуба атипове (сформовані корені)</span><span class="pp">4500 грн</span></div>
+            <div class="price-row"><span class="pn">Ушиття рани</span><span class="pp">200 грн</span></div>
+            <div class="price-row"><span class="pn">Аугментація</span><span class="pp">за домовленістю</span></div>
+            <div class="price-row"><span class="pn">Відкритий синусліфтинг</span><span class="pp">за домовленістю</span></div>
+            <div class="price-row"><span class="pn">Закритий синусліфтинг</span><span class="pp">250 €</span></div>
+            <div class="price-row"><span class="pn">Імплантація (Osstem)</span><span class="pp">400 €</span></div>
+            <div class="price-row"><span class="pn">Імплантація (Straumann)</span><span class="pp">600 €</span></div>
+            <div class="price-row"><span class="pn">Імплантація (Nobel)</span><span class="pp">600 €</span></div>
+            <div class="price-row"><span class="pn">М'якотканинна пластика (біля 1-2 зубів)</span><span class="pp">100 €</span></div>
+            <div class="price-row"><span class="pn">М'якотканинна пластика (біля більше 2-х зубів)</span><span class="pp">250 €</span></div>
+            <div class="price-row"><span class="pn">НКР</span><span class="pp">650 €</span></div>
+            <div class="price-row"><span class="pn">All-on-4 (седація, імплантація Osstem, тимчасова конструкція)</span><span class="pp">2800 €</span></div>
+            <div class="price-row"><span class="pn">All-on-6</span><span class="pp">3600 €</span></div>
+            <div class="price-row"><span class="pn">All-on-4 Nobel</span><span class="pp">4200 €</span></div>
+            <div class="price-row"><span class="pn">All-on-6 Nobel</span><span class="pp">5400 €</span></div>
+            <div class="price-row"><span class="pn">Апікальна мікрохірургія різця</span><span class="pp">250 €</span></div>
+            <div class="price-row"><span class="pn">Апікальна мікрохірургія премоляра</span><span class="pp">300 €</span></div>
+            <div class="price-row"><span class="pn">Апікальна мікрохірургія моляра</span><span class="pp">350 €</span></div>
+            <div class="price-row"><span class="pn">Закриття рецесії</span><span class="pp">за домовленістю</span></div>
+            <div class="price-row"><span class="pn">Седація (за 1 годину)</span><span class="pp">100 €</span></div>
+            <div class="price-row"><span class="pn">Видалення ретинованого зуба</span><span class="pp">100 €</span></div>
+            <div class="price-row"><span class="pn">Відкриття ретинованого зуба</span><span class="pp">500 €</span></div>
+            <div class="price-row"><span class="pn">Хірургічний шаблон</span><span class="pp">100 €</span></div>
+            <div class="price-row"><span class="pn">Видалення кисти</span><span class="pp">350 €</span></div>
+            <div class="price-row"><span class="pn">Корекція вуздечки</span><span class="pp">500 грн</span></div>
+            <div class="price-row"><span class="pn">Постановка формувача ясен</span><span class="pp">1000 грн</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="price-cat">
+        <button class="price-cat-head">
+          <span class="pc-title"><span class="pc-num">06</span><h3>Ортопедія</h3></span>
+          <span class="pc-right"><span class="pc-count">21 позицій</span><span class="plus"></span></span>
+        </button>
+        <div class="price-cat-body">
+          <div class="price-cat-inner">
+            <div class="price-row"><span class="pn">Сканування</span><span class="pp">1500 грн</span></div>
+            <div class="price-row"><span class="pn">Тимчасова коронка фрезерована</span><span class="pp">1500 грн</span></div>
+            <div class="price-row"><span class="pn">Коронка керамічна e.Max</span><span class="pp">250 €</span></div>
+            <div class="price-row"><span class="pn">Коронка цирконієва</span><span class="pp">220 €</span></div>
+            <div class="price-row"><span class="pn">Вінір</span><span class="pp">250 €</span></div>
+            <div class="price-row"><span class="pn">Коронка цирконієва на імплантант</span><span class="pp">250 €</span></div>
+            <div class="price-row"><span class="pn">Тимчасова коронка на імплант</span><span class="pp">50 €</span></div>
+            <div class="price-row"><span class="pn">Платформа (Osstem)</span><span class="pp">50 €</span></div>
+            <div class="price-row"><span class="pn">Індивідуальний абатмент цирконієвий (Osstem)</span><span class="pp">110 €</span></div>
+            <div class="price-row"><span class="pn">Платформа (Straumann)</span><span class="pp">75 €</span></div>
+            <div class="price-row"><span class="pn">Індивідуальний абатмент цирконієвий (Straumann)</span><span class="pp">180 €</span></div>
+            <div class="price-row"><span class="pn">Тимчасовий протез на балці (негайне навантаження All-on-4)</span><span class="pp">550 €</span></div>
+            <div class="price-row"><span class="pn">Постійна робота All-on-4 (цирконій + титанова балка)</span><span class="pp">2900 €</span></div>
+            <div class="price-row"><span class="pn">Постійна робота All-on-6 (цирконій + титанова балка)</span><span class="pp">3100 €</span></div>
+            <div class="price-row"><span class="pn">Робота преміум-техніка (польовошпат)</span><span class="pp">350 €</span></div>
+            <div class="price-row"><span class="pn">Накладка керамічна (inlay, onlay, overlay)</span><span class="pp">220 €</span></div>
+            <div class="price-row"><span class="pn">Цементування</span><span class="pp">200 грн</span></div>
+            <div class="price-row"><span class="pn">Коронка тимчасова швидка</span><span class="pp">500 грн</span></div>
+            <div class="price-row"><span class="pn">Зняття коронки</span><span class="pp">300 грн</span></div>
+            <div class="price-row"><span class="pn">Діагностичний mock-up</span><span class="pp">250 €</span></div>
+            <div class="price-row"><span class="pn">Підготовка зуба під коронку</span><span class="pp">500 грн</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="price-cat">
+        <button class="price-cat-head">
+          <span class="pc-title"><span class="pc-num">07</span><h3>Ортодонтія</h3></span>
+          <span class="pc-right"><span class="pc-count">32 позицій</span><span class="plus"></span></span>
+        </button>
+        <div class="price-cat-body">
+          <div class="price-cat-inner">
+            <div class="price-row"><span class="pn">Планування лікування елайнерами</span><span class="pp">3500 грн</span></div>
+            <div class="price-row"><span class="pn">Консультація ортодонта</span><span class="pp">500 грн</span></div>
+            <div class="price-row"><span class="pn">Фіксація брекет-системи (металеві) на одну щелепу</span><span class="pp">550 $</span></div>
+            <div class="price-row"><span class="pn">Фіксація брекет-системи (металеві/самолігуючі) на одну щелепу</span><span class="pp">650 $</span></div>
+            <div class="price-row"><span class="pn">Фіксація брекет-системи (керамічні) на одну щелепу</span><span class="pp">750 $</span></div>
+            <div class="price-row"><span class="pn">Фіксація брекет-системи (керамічні/самолігуючі) на одну щелепу</span><span class="pp">850 $</span></div>
+            <div class="price-row"><span class="pn">Встановлення апарату для розширення верхньої щелепи (Marco Rossa)</span><span class="pp">9000 грн</span></div>
+            <div class="price-row"><span class="pn">Встановлення апарату для розширення верхньої щелепи (Hyrax)</span><span class="pp">9000 грн</span></div>
+            <div class="price-row"><span class="pn">Розширення верхньої щелепи мікроімплантами MARPE, 1-й етап</span><span class="pp">15000 грн</span></div>
+            <div class="price-row"><span class="pn">Розширення верхньої щелепи мікроімплантами MARPE, 2-й етап</span><span class="pp">15000 грн</span></div>
+            <div class="price-row"><span class="pn">Апарат для розширення верхньої щелепи на 4-х мікроімплантах MARPE</span><span class="pp">45000 грн</span></div>
+            <div class="price-row"><span class="pn">Апарат для розширення верхньої щелепи (MSE)</span><span class="pp">40000 грн</span></div>
+            <div class="price-row"><span class="pn">Апарат для лікування дистального прикусу (Forsus)</span><span class="pp">15000 грн</span></div>
+            <div class="price-row"><span class="pn">Встановлення апарату для утримання місця (Space maker)</span><span class="pp">3000 грн</span></div>
+            <div class="price-row"><span class="pn">Сплінт-терапія (фрезована)</span><span class="pp">10000 грн</span></div>
+            <div class="price-row"><span class="pn">Пришліфовка сплінта</span><span class="pp">300 грн</span></div>
+            <div class="price-row"><span class="pn">Встановлення мікроімпланта</span><span class="pp">8000 грн</span></div>
+            <div class="price-row"><span class="pn">Корекція</span><span class="pp">550 грн</span></div>
+            <div class="price-row"><span class="pn">Корекція (складна)</span><span class="pp">1000 грн</span></div>
+            <div class="price-row"><span class="pn">Огляд</span><span class="pp">200 грн</span></div>
+            <div class="price-row"><span class="pn">Перефіксація одного брекета</span><span class="pp">500 грн</span></div>
+            <div class="price-row"><span class="pn">Перефіксація нового брекета</span><span class="pp">2000 грн</span></div>
+            <div class="price-row"><span class="pn">Фіксація брекет-системи 2х4</span><span class="pp">4000 грн</span></div>
+            <div class="price-row"><span class="pn">Фіксація брекет-системи 2х6</span><span class="pp">5000 грн</span></div>
+            <div class="price-row"><span class="pn">Зняття брекет-системи з однієї щелепи</span><span class="pp">1000 грн</span></div>
+            <div class="price-row"><span class="pn">Зняття діагностичних відбитків (комбіновані)</span><span class="pp">500 грн</span></div>
+            <div class="price-row"><span class="pn">Виготовлення ретенційної капи</span><span class="pp">1200 грн</span></div>
+            <div class="price-row"><span class="pn">Вставлення адгезивного ретейнера</span><span class="pp">1500 грн</span></div>
+            <div class="price-row"><span class="pn">Зняття ортодонтичної апаратури</span><span class="pp">500 грн</span></div>
+            <div class="price-row"><span class="pn">Лицьова маска для стимулювання росту верхньої щелепи (Face Mask)</span><span class="pp">6000 грн</span></div>
+            <div class="price-row"><span class="pn">Апарат для стимуляції росту нижньої щелепи (Twin-block)</span><span class="pp">6000 грн</span></div>
+            <div class="price-row"><span class="pn">Дисталізація на 2-х мікроімплантах</span><span class="pp">20000 грн</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="price-warranty reveal">
+      <h3>Гарантійні умови</h3>
+      <div class="price-row"><span class="pn">Художня реставрація зуба</span><span class="pp">9 місяців</span></div>
+      <div class="price-row"><span class="pn">Реставрація 3-х поверхонь зуба</span><span class="pp">9 місяців</span></div>
+      <div class="price-row"><span class="pn">Реставрація 1 чи 2-х поверхонь зуба</span><span class="pp">12 місяців</span></div>
+      <div class="price-row"><span class="pn">Керамічна коронка чи накладка</span><span class="pp">24 місяці</span></div>
+      <div class="price-row"><span class="pn">Цирконієва коронка чи конструкція</span><span class="pp">36 місяців</span></div>
+    </div>
+    <p class="price-disclaimer">Ціни вказані станом на момент публікації та можуть уточнюватися після діагностики. Частина послуг має вартість у євро/доларах — за курсом на день оплати.</p>
   </div>
 </section>
 
@@ -979,19 +1250,19 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
     <div class="contact-grid">
       <div class="contact-info reveal">
         <div class="ci-item">
-          <span class="ci-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1.1-.2 1.2.5 2.5.7 3.8.7.6 0 1 .4 1 1v3.6c0 .6-.4 1-1 1C10.3 21.3 2.7 13.7 2.7 4.8c0-.6.4-1 1-1H7.3c.6 0 1 .4 1 1 0 1.3.2 2.6.7 3.8.2.4.1.8-.2 1.1L6.6 10.8z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg></span>
+          <span class="ci-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg></span>
           <div><b>Телефон</b><a href="tel:+380997022572">+380 99 702 25 72</a></div>
         </div>
         <div class="ci-item">
-          <span class="ci-icon"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2.5" stroke="currentColor" stroke-width="1.7"/><path d="M4 7l8 6 8-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+          <span class="ci-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></span>
           <div><b>Email</b><a href="mailto:info@alldentalstudio.com">info@alldentalstudio.com</a></div>
         </div>
         <div class="ci-item">
-          <span class="ci-icon"><svg viewBox="0 0 24 24" fill="none"><path d="M12 21s-7-5.1-7-11a7 7 0 0114 0c0 5.9-7 11-7 11z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg></span>
+          <span class="ci-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
           <div><b>Адреса</b><span>м. Калуш, м-н Шептицького, 5 (2, 3 пов.)</span></div>
         </div>
         <div class="ci-item">
-          <span class="ci-icon"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+          <span class="ci-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" width="22" height="22"><circle cx="12" cy="12" r="10"/><polyline points="12,6 12,12 16,14"/></svg></span>
           <div><b>Графік роботи</b><span>Пн-Пт: 9:00-19:00</span><span>Субота: 9:00-15:00</span></div>
         </div>
         <div class="map-frame">
@@ -1196,7 +1467,7 @@ document.querySelectorAll('[data-ba]').forEach(slider => {
     const rect = slider.getBoundingClientRect();
     let pct = ((clientX - rect.left) / rect.width) * 100;
     pct = Math.max(0, Math.min(100, pct));
-    afterWrap.style.clipPath = `inset(0 ${100-pct}% 0 0)`;
+    afterWrap.style.clipPath = `inset(0 0 0 ${pct}%)`;
     handle.style.left = pct + '%';
   }
   slider.addEventListener('pointerdown', e => { dragging = true; slider.setPointerCapture(e.pointerId); setPos(e.clientX); });
@@ -1231,6 +1502,22 @@ document.querySelectorAll('.faq-item').forEach(item => {
     if (!isOpen){
       item.classList.add('is-open');
       a.style.maxHeight = a.scrollHeight + 'px';
+    }
+  });
+});
+
+/* ---------- Price list accordion (categories open independently) ---------- */
+document.querySelectorAll('.price-cat').forEach(item => {
+  const q = item.querySelector('.price-cat-head');
+  const body = item.querySelector('.price-cat-body');
+  q.addEventListener('click', () => {
+    const isOpen = item.classList.contains('is-open');
+    if (isOpen){
+      item.classList.remove('is-open');
+      body.style.maxHeight = null;
+    } else {
+      item.classList.add('is-open');
+      body.style.maxHeight = body.scrollHeight + 'px';
     }
   });
 });
