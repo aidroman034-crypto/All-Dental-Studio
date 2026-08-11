@@ -182,23 +182,7 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
   color:#fff;
   transform:translateY(-3px) scale(1.05);
 }
-.burger{display:none;width:44px;height:44px;border-radius:50%;background:var(--blue-pale);align-items:center;justify-content:center;flex:none;}
-.burger span,.burger span::before,.burger span::after{content:'';display:block;width:18px;height:2px;background:var(--navy);position:relative;transition:transform .3s,opacity .3s;}
-.burger span::before{position:absolute;top:-6px;}
-.burger span::after{position:absolute;top:6px;}
-.burger.is-open span{background:transparent;}
-.burger.is-open span::before{transform:translateY(6px) rotate(45deg);}
-.burger.is-open span::after{transform:translateY(-6px) rotate(-45deg);}
 
-.mobile-nav{
-  position:fixed;inset:0;background:var(--navy);z-index:999;
-  display:flex;flex-direction:column;justify-content:center;padding:40px 32px;
-  transform:translateX(100%);transition:transform .5s var(--ease);
-}
-.mobile-nav.is-open{transform:translateX(0);}
-.mobile-nav a{display:block;font-family:'Golos Text',sans-serif;font-size:30px;font-weight:800;color:#fff;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.1);}
-.mobile-nav .mobile-contact{margin-top:30px;color:rgba(255,255,255,.7);font-size:15px;line-height:1.8;}
-.mobile-nav .mobile-contact a{font-size:20px;color:#fff;padding:0;border:none;font-family:'Manrope';font-weight:700;}
 
 /* ============ HERO ============ */
 .hero{
@@ -543,7 +527,6 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
 @media (max-width:860px){
   .main-nav{display:none;}
   .header-contact{display:none;}
-  .burger{display:flex;}
   .footer-top{grid-template-columns:1fr 1fr;row-gap:36px;}
 }
 @media (max-width:640px){
@@ -596,23 +579,9 @@ h1,h2,h3,h4{font-family:'Golos Text',sans-serif;font-weight:800;line-height:1.08
         <svg viewBox="0 0 24 24" fill="none"><rect x="3" y="3" width="18" height="18" rx="5.5" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.8"/><circle cx="17.4" cy="6.6" r="1.1" fill="currentColor"/></svg>
       </a>
       <a href="#contact" class="btn btn-primary btn-sm">Записатися</a>
-      <button class="burger" id="burgerBtn" aria-label="Відкрити меню" aria-expanded="false"><span></span></button>
     </div>
   </div>
 </header>
-
-<div class="mobile-nav" id="mobileNav">
-  <a href="#advantages">Про клініку</a>
-  <a href="#doctors">Наші лікарі</a>
-  <a href="#services">Послуги</a>
-  <a href="#prices">Ціни</a>
-  <a href="#reviews">Відгуки</a>
-  <a href="#contact">Контакти</a>
-  <div class="mobile-contact">
-    <a href="tel:+380997022572">+380 99 702 25 72</a>
-    м. Калуш, м-н Шептицького, 5 (2, 3 пов.)
-  </div>
-</div>
 
 <!-- ============ HERO ============ -->
 <section class="hero" id="hero">
@@ -1405,20 +1374,6 @@ if (heroVideo) {
 const header = document.getElementById('siteHeader');
 const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 30);
 onScroll(); document.addEventListener('scroll', onScroll, {passive:true});
-
-/* ---------- Mobile nav ---------- */
-const burger = document.getElementById('burgerBtn');
-const mobileNav = document.getElementById('mobileNav');
-burger.addEventListener('click', () => {
-  const open = mobileNav.classList.toggle('is-open');
-  burger.classList.toggle('is-open', open);
-  burger.setAttribute('aria-expanded', open);
-  document.body.style.overflow = open ? 'hidden' : '';
-});
-mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => {
-  mobileNav.classList.remove('is-open'); burger.classList.remove('is-open');
-  document.body.style.overflow = '';
-}));
 
 /* ---------- Scroll reveal ---------- */
 const io = new IntersectionObserver((entries) => {
